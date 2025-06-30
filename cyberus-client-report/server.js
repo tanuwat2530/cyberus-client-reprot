@@ -18,6 +18,6 @@ app.prepare().then(() => {
   });
 
   server.listen(port, () => {
-    console.log(`> Server ready on http://localhost:${port}`);
+    console.log(`> client-report ready on http://localhost:${port}`);
   });
 });
