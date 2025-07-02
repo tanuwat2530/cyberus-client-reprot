@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { format, eachDayOfInterval } from 'date-fns';
@@ -8,6 +9,43 @@ import {
 } from 'recharts';
 
 export default function ClientReport(){
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const router = useRouter();
+  const [err,setError]= useState([]);
+
+ useEffect(() => {
+    const username = localStorage.getItem('user'); // replace with your key
+    const session = localStorage.getItem('session'); // replace with your key
+    const reqData = {
+      username,
+      session,
+    };
+//CHECK SESSION LOGIN API
+    fetch(`${apiUrl}/api/client-report-session`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reqData),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch user list');
+      }
+      return response.json();
+    })
+    .then((data) =>  {
+      if (data["code"] === '0') {
+          router.push('/login')
+      }
+    })
+    .catch((err) => setError(err.message));
+  }, []);
+
+
+
+
+
 
 const [startDate, setStartDate] = useState(new Date(), 'dd/MM/yyyy');
 const [endDate, setEndDate] = useState(new Date(), 'dd/MM/yyyy');

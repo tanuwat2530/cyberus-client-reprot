@@ -65,7 +65,7 @@ const CyberusLogin = () => {
   };
 
   return (
-    <div className="is-preload" id="wrapper" style={{ minHeight: '100vh' }}>
+    <div className="is-preload" id="wrapper" style={{ color:'red'}}>
       {/* Intro Section */}
       <div id="intro">
         <h1>CYBERUS</h1>
