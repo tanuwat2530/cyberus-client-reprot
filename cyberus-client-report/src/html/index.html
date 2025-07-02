@@ -1,0 +1,81 @@
+import React, { useState } from 'react';
+import './assets/css/main.css';
+import './assets/css/noscript.css';
+
+const CyberusLogin = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Username:", username);
+    console.log("Password:", password);
+    // TODO: send to server
+  };
+
+  return (
+    <div className="is-preload" id="wrapper" style={{ minHeight: '100vh' }}>
+      {/* Intro Section */}
+      <div id="intro">
+        <h1>CYBERUS</h1>
+        <h3>Reporting Interface</h3>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>
+              USER NAME
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <label>
+              PASSWORD
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </label>
+          </div>
+          <div style={{ marginBottom: '1rem' }}>
+            <input type="submit" value="Login" />
+          </div>
+        </form>
+
+        <p>
+          2025 Cyberus Corporation Co., Ltd.<br />
+          If you have any problem with this interface, please contact{' '}
+          <a href="mailto:webmaster@cyberuscorporation.com">
+            webmaster@cyberuscorporation.com
+          </a>.
+        </p>
+
+        <ul className="actions">
+          <li>
+            <a
+              href="#header"
+              className="button icon solid solo fa-arrow-down scrolly"
+            >
+              Continue
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      {/* Header Section */}
+      <header id="header">
+        <a href="index.html" className="logo">
+          CYBERUS
+        </a>
+      </header>
+    </div>
+  );
+};
+
+export default CyberusLogin;

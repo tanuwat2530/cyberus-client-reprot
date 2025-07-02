@@ -6,6 +6,13 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
+
+export default function ClientReport(){
+
+const [startDate, setStartDate] = useState(new Date(), 'dd/MM/yyyy');
+const [endDate, setEndDate] = useState(new Date(), 'dd/MM/yyyy');
+const [filteredData, setFilteredData] = useState([]);  
+
 const lineChartData = 
 {
     "dtac-cancel": [
@@ -21,8 +28,8 @@ const lineChartData =
         },
         {
             "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 0
+            "ShortCode": "4239111",
+            "Total": 23
         },
         {
             "Date": "25/06/2025",
@@ -31,7 +38,7 @@ const lineChartData =
         },
         {
             "Date": "22/06/2025",
-            "ShortCode": "",
+            "ShortCode": "4239222",
             "Total": 2
         },
         {
@@ -41,12 +48,12 @@ const lineChartData =
         },
         {
             "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 30
+            "ShortCode": "4239222",
+            "Total": 45
         },
         {
             "Date": "25/06/2025",
-            "ShortCode": "",
+            "ShortCode": "4239111",
             "Total": 7
         }
     ],
@@ -63,12 +70,12 @@ const lineChartData =
         },
         {
             "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 0
+            "ShortCode": "4239111",
+            "Total": 56
         },
         {
             "Date": "25/06/2025",
-            "ShortCode": "",
+            "ShortCode": "4239222",
             "Total": 55
         },
         {
@@ -115,7 +122,7 @@ const lineChartData =
         },
         {
             "Date": "22/06/2025",
-            "ShortCode": "",
+            "ShortCode": "4239111",
             "Total": 20
         },
         {
@@ -142,8 +149,8 @@ const lineChartData =
         },
         {
             "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
+            "ShortCode": "4239222",
+            "Total": 11
         },
         {
             "Date": "24/06/2025",
@@ -162,8 +169,8 @@ const lineChartData =
         },
         {
             "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
+            "ShortCode": "4239111",
+            "Total": 7
         },
         {
             "Date": "24/06/2025",
@@ -178,13 +185,11 @@ const lineChartData =
     ]
 }
 
-
 // Merge and group totals and shortcodes by date
 const mergeChartData = () => {
   const allDates = Array.from(new Set(
     Object.values(lineChartData).flat().map(item => item.Date)
   ));
-
   return allDates.map(date => {
     const getSumAndShorts = (key) => {
      if(lineChartData[key] != null)
@@ -226,6 +231,7 @@ const mergeChartData = () => {
     };
   });
 };
+
 const lineChartReport = mergeChartData();
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -244,7 +250,6 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-
 const pieData = [
   {name:'454111',value:11,count: 11},
   {name:'454222',value:22,count: 22},
@@ -255,6 +260,16 @@ const pieData = [
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA66CC'];
 
+const handleSearch = () => {
+  if (startDate && endDate) {
+    const datesInRange = eachDayOfInterval({ start: startDate, end: endDate });
+    const formattedDates = datesInRange.map(date => format(date, 'dd/MM/yyyy'));
+    console.log("Selected Dates:");
+    formattedDates.forEach(dateStr => console.log(convertDateRangeToTimestamps(dateStr)))    
+  } else {
+    alert("Please select both start and end dates.");
+  }
+};  
 
 function convertDateRangeToTimestamps(dateString) {
     // Ensure dateString is in a format parseable by new Date()
@@ -295,30 +310,8 @@ function convertDateRangeToTimestamps(dateString) {
         endSeconds: endTimestampSecondsPrecise // Use this for 23:59:59 in seconds
     };
 }
-
-const ReportChartComponent = () => {
-  const [startDate, setStartDate] = useState(new Date('2025-06-22'));
-  const [endDate, setEndDate] = useState(new Date('2025-06-30'));
-  const [filteredData, setFilteredData] = useState([]);
-
-const handleSearch = () => {
-  if (startDate && endDate) {
-    const datesInRange = eachDayOfInterval({ start: startDate, end: endDate });
-
-    const formattedDates = datesInRange.map(date => format(date, 'dd/MM/yyyy'));
-    
-    console.log("Selected Dates:");
-    formattedDates.forEach(dateStr => console.log(convertDateRangeToTimestamps(dateStr)))
-  } else {
-    alert("Please select both start and end dates.");
-  }
-};
-
- 
-
-
   return (
-    <div style={{ padding: '40px' }}>
+    <div style={{ padding: '40px'  }}>
       {/* Date Picker UI */}
       <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
         <div>
@@ -381,8 +374,4 @@ const handleSearch = () => {
       </div>
     </div>
   );
-};
-
-
- 
-export default ReportChartComponent;
+}
