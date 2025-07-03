@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/assets/css/main.css';
 
-const CyberusLogin = () => {
+export default function CyberusLogin () {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
@@ -17,8 +17,7 @@ const CyberusLogin = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Username:", username);
-    console.log("Password:", password);
+
     // TODO: send to server
   const uniqueId = uuidv4();
         // Combine and hash
@@ -44,19 +43,20 @@ const CyberusLogin = () => {
         return response.json();
       })
       .then((data) => {
-
-        console.log(data["code"])
-        if (data["code"] === '1'){
+        // console.log("username : ",username)
+        // console.log("password : ",password)
+        // console.log("partner_id : ",data[0]["partner_id"])
+        if (data[0]["code"] === '1'){
           alert("Welcome "+username)
           localStorage.setItem("user", username);
           localStorage.setItem("session", session);
+          localStorage.setItem("partner_id", data[0]["partner_id"]);
           router.push("/report")
           
         }else{
-               // Redirect if no session
-      navigate('/login');
+          // Redirect if no session
+          navigate('/login');
         }
-
       })
       .catch((error) => {
         console.error('Error:', error.message);
@@ -65,7 +65,18 @@ const CyberusLogin = () => {
   };
 
   return (
-    <div className="is-preload" id="wrapper" style={{ color:'red'}}>
+   <div
+    className="is-preload"
+    id="wrapper"
+    style={{
+      color: 'red',
+      backgroundImage: `url('/images/bg.jpg')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      minHeight: '100vh',
+    }}
+  >
       {/* Intro Section */}
       <div id="intro">
         <h1>CYBERUS</h1>
@@ -73,7 +84,7 @@ const CyberusLogin = () => {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>
-            <label>
+            <label className='label-caption'>
               USER NAME
               <input
                 type="text"
@@ -84,7 +95,7 @@ const CyberusLogin = () => {
             </label>
           </div>
           <div style={{ marginBottom: '1rem' }}>
-            <label>
+            <label className='label-caption'>
               PASSWORD
               <input
                 type="password"
@@ -107,7 +118,7 @@ const CyberusLogin = () => {
           </a>.
         </p>
 
-        <ul className="actions">
+        {/* <ul className="actions">
           <li>
             <a
               href="#header"
@@ -116,7 +127,7 @@ const CyberusLogin = () => {
               Continue
             </a>
           </li>
-        </ul>
+        </ul> */}
       </div>
 
       {/* Header Section */}
@@ -129,4 +140,4 @@ const CyberusLogin = () => {
   );
 };
 
-export default CyberusLogin;
+

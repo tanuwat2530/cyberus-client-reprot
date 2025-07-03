@@ -98,9 +98,9 @@ input, select, textarea {
 		box-sizing: inherit;
 	}
 
-	/* body {
+	body {
 		background-color: #1e252d;
-	} */
+	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
 			-moz-animation: none !important;
@@ -113,43 +113,15 @@ input, select, textarea {
 			transition: none !important;
 		}
 
-/* Type */
 
-	html {
-		font-size: 16pt;
-	}
-
-		@media screen and (max-width: 1680px) {
-
-			html {
-				font-size: 12pt;
-			}
-
-		}
-
-		@media screen and (max-width: 1280px) {
-
-			html {
-				font-size: 11pt;
-			}
-
-		}
-
-		@media screen and (max-width: 360px) {
-
-			html {
-				font-size: 10pt;
-			}
-
-		}
 
 	/* body {
-		background-image: url('../../images/bg.jpg');
+		background-image: url('images/bg.jpg');
   		background-size: cover;
   		background-repeat: no-repeat;
   		background-position: center center;
-  		height: 100vh;
-  		margin: 0;
+  height: 100vh;
+  margin: 0;
 	} */
 
 	body, input, select, textarea {

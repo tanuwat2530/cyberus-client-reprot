@@ -1,25 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+
 import { format, eachDayOfInterval } from 'date-fns';
+import 'react-datepicker/dist/react-datepicker.css';
+
+
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts';
 
 export default function ClientReport(){
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-  const router = useRouter();
-  const [err,setError]= useState([]);
 
- useEffect(() => {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const router = useRouter();
+const [shortcodeList, setShortcodeList] = useState([]);
+const [dataReport, setDataReport] = useState(null);
+
+const [err,setError]= useState([]);
+
+
+useEffect(() => {
     const username = localStorage.getItem('user'); // replace with your key
     const session = localStorage.getItem('session'); // replace with your key
+    const partner_id = localStorage.getItem('partner_id'); // replace with your key
+    
     const reqData = {
       username,
       session,
     };
+
 //CHECK SESSION LOGIN API
     fetch(`${apiUrl}/api/client-report-session`, {
       method: 'POST',
@@ -40,211 +51,56 @@ export default function ClientReport(){
       }
     })
     .catch((err) => setError(err.message));
+
+//GET SHORTCODE
+  console.log("partner_id : ", partner_id)
+    fetch(`${apiUrl}/api/client-report-shortcode-client`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    body: JSON.stringify({client_partner_id: partner_id}),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch user list');
+        }
+        return response.json();
+      })
+      .then((data) =>  
+       // console.log("SHORTCODE : ",JSON.stringify(data)))
+        setShortcodeList( data ))
+      .catch((err) => setError(err.message));
+
+
   }, []);
-
-
-
-
-
 
 const [startDate, setStartDate] = useState(new Date(), 'dd/MM/yyyy');
 const [endDate, setEndDate] = useState(new Date(), 'dd/MM/yyyy');
-const [filteredData, setFilteredData] = useState([]);  
 
-const lineChartData = 
-{
-    "dtac-cancel": [
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "4239111",
-            "Total": 23
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "4239222",
-            "Total": 2
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "4239222",
-            "Total": 45
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "4239111",
-            "Total": 7
-        }
-    ],
-    "dtac-register": [
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "4239111",
-            "Total": 56
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "4239222",
-            "Total": 55
-        },
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        }
-    ],
-    "tmvh-cancel": [
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "4239111",
-            "Total": 20
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        }
-    ],
-    "tmvh-register": [
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "4239111",
-            "Total": 100
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "4239222",
-            "Total": 11
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "22/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "23/06/2025",
-            "ShortCode": "4239111",
-            "Total": 7
-        },
-        {
-            "Date": "24/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        },
-        {
-            "Date": "25/06/2025",
-            "ShortCode": "",
-            "Total": 0
-        }
-    ]
-}
-
+//DO NOT MOVE ORDER
 // Merge and group totals and shortcodes by date
-const mergeChartData = () => {
+const mergeChartData = (reportData) => {
   const allDates = Array.from(new Set(
-    Object.values(lineChartData).flat().map(item => item.Date)
+    Object.values(reportData).flat().map(item => item.Date)
   ));
+
   return allDates.map(date => {
     const getSumAndShorts = (key) => {
-     if(lineChartData[key] != null)
-     {
-      const filtered = lineChartData[key].filter(item => item.Date === date);
-      return {
-        total: filtered.reduce((sum, item) => sum + item.Total, 0),
-        shorts: filtered.map(item => item.ShortCode).filter(code => code !== "0").join(', ')
-      };
-    }else{
-       return {
-        total:0,
-        shorts: ""
-      };
-    }
-  }
-    
+      if (reportData[key] != null) {
+        const filtered = reportData[key].filter(item => item.Date === date);
+        return {
+          total: filtered.reduce((sum, item) => sum + item.Total, 0),
+          shorts: filtered.map(item => item.ShortCode).filter(code => code !== "0").join(', ')
+        };
+      } else {
+        return {
+          total: 0,
+          shorts: ""
+        };
+      }
+    };
+
     const aisCancel = getSumAndShorts("ais-cancel");
     const aisRegister = getSumAndShorts("ais-register");
     const dtacCancel = getSumAndShorts("dtac-cancel");
@@ -270,7 +126,10 @@ const mergeChartData = () => {
   });
 };
 
-const lineChartReport = mergeChartData();
+const lineChartReport = dataReport ? mergeChartData(dataReport) : [];
+
+//DO NOT MOVE ORDER
+
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload || !payload.length) return null;
@@ -289,25 +148,57 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const pieData = [
-  {name:'454111',value:11,count: 11},
-  {name:'454222',value:22,count: 22},
-  {name:'454333',value:33,count: 33},
-  {name:'454444',value:44,count: 44}, 
-  {name:'454555',value:55,count: 55},
+  {name:'CAPTION-1',value:11,count: 11},
+  {name:'CAPTION-2',value:22,count: 22},
+  {name:'CAPTION-3',value:33,count: 33},
+  {name:'CAPTION-4',value:44,count: 44}, 
+  {name:'CAPTION-5',value:55,count: 55},
 ]
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA66CC'];
 
 const handleSearch = () => {
+
   if (startDate && endDate) {
+
     const datesInRange = eachDayOfInterval({ start: startDate, end: endDate });
     const formattedDates = datesInRange.map(date => format(date, 'dd/MM/yyyy'));
-    console.log("Selected Dates:");
-    formattedDates.forEach(dateStr => console.log(convertDateRangeToTimestamps(dateStr)))    
+    
+    const searchTimeArray = [];
+    formattedDates.forEach(dateStr =>     
+     searchTimeArray.push(convertDateRangeToTimestamps(dateStr))
+    )
+    
+const payload = {
+  "list-shortcode": shortcodeList,     // e.g. from another state
+  "date-time": searchTimeArray      // your new date range
+};
+
+console.log("PAYLOAD : ",(JSON.stringify(payload)))
+    fetch(`${apiUrl}/api/client-report-line-chart`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch report data');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Report Data:', JSON.stringify(data)); // optional debug log
+         setDataReport(data); // <- set it into state
+      })
+      .catch((err) => setError(err.message));
+      
   } else {
     alert("Please select both start and end dates.");
   }
 };  
+
 
 function convertDateRangeToTimestamps(dateString) {
     // Ensure dateString is in a format parseable by new Date()
@@ -344,11 +235,17 @@ function convertDateRangeToTimestamps(dateString) {
        
        // startMs: startTimestampMs,
        // endMs: endTimestampMs,
-        startSeconds: startTimestampSeconds,
-        endSeconds: endTimestampSecondsPrecise // Use this for 23:59:59 in seconds
+        dateString:dateString,
+        startSeconds: startTimestampSeconds.toString(),
+        endSeconds: endTimestampSecondsPrecise.toString() // Use this for 23:59:59 in seconds
     };
 }
+
+
+
+
   return (
+
     <div style={{ padding: '40px'  }}>
       {/* Date Picker UI */}
       <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -367,24 +264,25 @@ function convertDateRangeToTimestamps(dateString) {
         </div>
       </div>
 
-      {/* Line Chart */}
-      <div style={{ width: '90%', height: 400, marginBottom: '40px' }}>
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={lineChartReport} margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend />
-            <Line type="monotone" dataKey="aisCancelTotal" stroke="#025c09" name="AIS Cancel" />
-            <Line type="monotone" dataKey="aisRegisterTotal" stroke="#0ead1b" name="AIS Register" />
-            <Line type="monotone" dataKey="dtacCancelTotal" stroke="#091875" name="DTAC Cancel" />
-            <Line type="monotone" dataKey="dtacRegisterTotal" stroke="#0541f5" name="DTAC Register" />
-            <Line type="monotone" dataKey="tmvhCancelTotal" stroke="#a36070" name="TMVH Cancel" />
-            <Line type="monotone" dataKey="tmvhRegisterTotal" stroke="#e6093d" name="TMVH Register" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+     {dataReport && (
+  <div style={{ width: '90%', height: 400, marginBottom: '40px' }}>
+    <ResponsiveContainer width="100%" height={400}>
+      <LineChart data={lineChartReport} margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip content={<CustomTooltip />} />
+        <Legend />
+        <Line type="monotone" dataKey="aisCancelTotal" stroke="#025c09" name="AIS Cancel" />
+        <Line type="monotone" dataKey="aisRegisterTotal" stroke="#0ead1b" name="AIS Register" />
+        <Line type="monotone" dataKey="dtacCancelTotal" stroke="#091875" name="DTAC Cancel" />
+        <Line type="monotone" dataKey="dtacRegisterTotal" stroke="#0541f5" name="DTAC Register" />
+        <Line type="monotone" dataKey="tmvhCancelTotal" stroke="#a36070" name="TMVH Cancel" />
+        <Line type="monotone" dataKey="tmvhRegisterTotal" stroke="#e6093d" name="TMVH Register" />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+)}
 
       {/* Pie Chart */}
       <div style={{ width: '100%', height: 300 }}>
