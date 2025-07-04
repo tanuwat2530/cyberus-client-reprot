@@ -1,5 +1,7 @@
-import React from 'react';
+/* eslint-disable no-console */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState } from 'react';
+
 import { useRouter } from 'next/router';
 import SHA256 from 'crypto-js/sha256';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,10 +12,11 @@ import '../styles/assets/css/main.css';
 export default function CyberusLogin () {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,7 +58,7 @@ export default function CyberusLogin () {
           
         }else{
           // Redirect if no session
-          navigate('/login');
+          router.push("/login")
         }
       })
       .catch((error) => {

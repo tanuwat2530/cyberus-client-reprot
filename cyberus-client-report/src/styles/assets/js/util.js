@@ -1,3 +1,4 @@
+/* eslint-disable */
 (function($) {
 
 	/**
@@ -20,8 +21,8 @@
 			b.push(
 				'<a ' +
 					'class="link depth-' + indent + '"' +
-					( (typeof target !== 'undefined' && target != '') ? ' target="' + target + '"' : '') +
-					( (typeof href !== 'undefined' && href != '') ? ' href="' + href + '"' : '') +
+					( (typeof target != 'undefined' && target != '') ? ' target="' + target + '"' : '') +
+					( (typeof href != 'undefined' && href != '') ? ' href="' + href + '"' : '') +
 				'>' +
 					'<span class="indent-' + indent + '"></span>' +
 					$this.text() +
@@ -187,8 +188,8 @@
 
 				$this.on('touchmove', function(event) {
 
-					if ($this.touchPosX === null
-					||	$this.touchPosY === null)
+					if ($this.touchPosX == null
+					||	$this.touchPosY == null)
 						return;
 
 					var	diffX = $this.touchPosX - event.originalEvent.touches[0].pageX,

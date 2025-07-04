@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 	Massively by HTML5 UP
 	html5up.net | @ajlkn
@@ -34,7 +35,7 @@
 		var	$window = $(window),
 			$this = $(this);
 
-		if (this.length == 0 || intensity === 0)
+		if (this.length == 0 || intensity == 0)
 			return $this;
 
 		if (this.length > 1) {
