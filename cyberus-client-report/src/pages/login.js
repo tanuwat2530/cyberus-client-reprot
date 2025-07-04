@@ -66,9 +66,19 @@ export default function CyberusLogin () {
   };
 
   return (
-   <div className='backgroud-login'>
+   <div>
       {/* Intro Section */}
-      <div id="intro">
+     <div
+  id="intro"
+  style={{
+    backgroundImage: "url('./images/bg.jpg')", // ✅ use /images/... if image is in public folder
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    height: '100vh',
+    margin: 0,
+  }}
+>
         <h1>CYBERUS</h1>
         <h3>Reporting Interface</h3>
 
@@ -76,7 +86,7 @@ export default function CyberusLogin () {
           <div style={{ marginBottom: '1rem' }}>
             <label className='label-login'>
               USER NAME
-              <input className='input-login'
+              <input className='i'
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -87,7 +97,7 @@ export default function CyberusLogin () {
           <div style={{ marginBottom: '1rem' }}>
             <label className='label-login'>
               PASSWORD
-              <input  className='input-login'
+              <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
