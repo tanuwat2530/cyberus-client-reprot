@@ -9,7 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,PieChart,Pie,Cell, ResponsiveContainer
 } from 'recharts';
 
 export default function ClientReport(){
@@ -33,7 +33,7 @@ useEffect(() => {
     };
 
 //CHECK SESSION LOGIN API
-    fetch(`${apiUrl}/api/client-report-session`, {
+    fetch(`${apiUrl}/report-session`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ useEffect(() => {
 
 //GET SHORTCODE
   console.log("partner_id : ", partner_id)
-    fetch(`${apiUrl}/api/client-report-shortcode-client`, {
+    fetch(`${apiUrl}/report-shortcode-client`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -136,27 +136,27 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload || !payload.length) return null;
   const item = payload[0].payload;
   return (
-    <div style={{ backgroundColor: '#fff', border: '1px solid #ccc', padding: 10 }}>
-      <p><strong>Date:</strong> {label}</p>
-      <p>AIS Cancel: {item.aisCancelTotal} ({item.aisCancelShort || 'N/A'})</p>
-      <p>AIS Register: {item.aisRegisterTotal} ({item.aisRegisterShort || 'N/A'})</p>
-      <p>DTAC Cancel: {item.dtacCancelTotal} ({item.dtacCancelShort || 'N/A'})</p>
-      <p>DTAC Register: {item.dtacRegisterTotal} ({item.dtacRegisterShort || 'N/A'})</p>
-      <p>TMVH Cancel: {item.tmvhCancelTotal} ({item.tmvhCancelShort || 'N/A'})</p>
-      <p>TMVH Register: {item.tmvhRegisterTotal} ({item.tmvhRegisterShort || 'N/A'})</p>
+    <div style={{ backgroundColor: '#FFF', border: '1px solid #ccc', padding: 2 }}>
+      <div><strong>Date:</strong> {label}</div>
+      <div>AIS Cancel: {item.aisCancelTotal} ({item.aisCancelShort || 'N/A'})</div>
+      <div>AIS Register: {item.aisRegisterTotal} ({item.aisRegisterShort || 'N/A'})</div>
+      <div>DTAC Cancel: {item.dtacCancelTotal} ({item.dtacCancelShort || 'N/A'})</div>
+      <div>DTAC Register: {item.dtacRegisterTotal} ({item.dtacRegisterShort || 'N/A'})</div>
+      <div>TMVH Cancel: {item.tmvhCancelTotal} ({item.tmvhCancelShort || 'N/A'})</div>
+      <div>TMVH Register: {item.tmvhRegisterTotal} ({item.tmvhRegisterShort || 'N/A'})</div>
     </div>
   );
 };
 
-// const pieData = [
-//   {name:'CAPTION-1',value:11,count: 11},
-//   {name:'CAPTION-2',value:22,count: 22},
-//   {name:'CAPTION-3',value:33,count: 33},
-//   {name:'CAPTION-4',value:44,count: 44}, 
-//   {name:'CAPTION-5',value:55,count: 55},
-// ]
+const pieData = [
+  {name:'CAPTION-1',value:11,count: 11},
+  {name:'CAPTION-2',value:22,count: 22},
+  {name:'CAPTION-3',value:33,count: 33},
+  {name:'CAPTION-4',value:44,count: 44}, 
+  {name:'CAPTION-5',value:55,count: 55},
+]
 
-// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA66CC'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA66CC'];
 
 const handleSearch = () => {
 
@@ -176,7 +176,7 @@ const payload = {
 };
 
 console.log("PAYLOAD : ",(JSON.stringify(payload)))
-    fetch(`${apiUrl}/api/client-report-line-chart`, {
+    fetch(`${apiUrl}/report-line-chart`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -247,9 +247,9 @@ function convertDateRangeToTimestamps(dateString) {
 
   return (
 
-    <div style={{ padding: '40px'  }}>
+    <div style={{ padding: '40px' ,backgroundColor: '#FFFFFF' , zIndex:'revert'}}>
       {/* Date Picker UI */}
-      <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
         <div>
           <label><strong>Start Date:</strong></label><br />
           <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} dateFormat="dd/MM/yyyy" />
@@ -286,7 +286,7 @@ function convertDateRangeToTimestamps(dateString) {
 )}
  
       {/* Pie Chart */}
-      {/* <div style={{ width: '100%', height: 300 }}>
+      <div style={{ width: '100%', height: 300 }}>
         <center><h4>Overall Register</h4></center>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -330,7 +330,7 @@ function convertDateRangeToTimestamps(dateString) {
           </PieChart>
         </ResponsiveContainer>
 
-      </div> */}
+      </div>
       
     </div>
   );

@@ -7,8 +7,6 @@ import SHA256 from 'crypto-js/sha256';
 import { v4 as uuidv4 } from 'uuid';
 
 
-import '../styles/assets/css/main.css';
-
 export default function CyberusLogin () {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -32,7 +30,7 @@ export default function CyberusLogin () {
       session
     };
   
-    fetch(`${apiUrl}/api/client-report-login`, {
+    fetch(`${apiUrl}/report-login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -68,18 +66,7 @@ export default function CyberusLogin () {
   };
 
   return (
-   <div
-    className="is-preload"
-    id="wrapper"
-    style={{
-      color: 'red',
-      backgroundImage: `url('/images/bg.jpg')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      minHeight: '100vh',
-    }}
-  >
+   <div className='backgroud-login'>
       {/* Intro Section */}
       <div id="intro">
         <h1>CYBERUS</h1>
@@ -87,9 +74,9 @@ export default function CyberusLogin () {
 
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '1rem' }}>
-            <label className='label-caption'>
+            <label className='label-login'>
               USER NAME
-              <input
+              <input className='input-login'
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -98,9 +85,9 @@ export default function CyberusLogin () {
             </label>
           </div>
           <div style={{ marginBottom: '1rem' }}>
-            <label className='label-caption'>
+            <label className='label-login'>
               PASSWORD
-              <input
+              <input  className='input-login'
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -109,7 +96,7 @@ export default function CyberusLogin () {
             </label>
           </div>
           <div style={{ marginBottom: '1rem' }}>
-            <input type="submit" value="Login" />
+            <input className='button-login' type="submit" value="Login" />
           </div>
         </form>
 
