@@ -46,7 +46,7 @@ useEffect(() => {
       return response.json();
     })
     .then((data) =>  {
-      if (data["code"] === '0') {
+      if (data["code"] == '0') {
           router.push('/login')
       }
     })
@@ -88,10 +88,10 @@ const mergeChartData = (reportData) => {
   return allDates.map(date => {
     const getSumAndShorts = (key) => {
       if (reportData[key] != null) {
-        const filtered = reportData[key].filter(item => item.Date === date);
+        const filtered = reportData[key].filter(item => item.Date == date);
         return {
           total: filtered.reduce((sum, item) => sum + item.Total, 0),
-          shorts: filtered.map(item => item.ShortCode).filter(code => code !== "0").join(', ')
+          shorts: filtered.map(item => item.ShortCode).filter(code => code != "0").join(', ')
         };
       } else {
         return {

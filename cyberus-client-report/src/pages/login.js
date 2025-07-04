@@ -46,7 +46,7 @@ export default function CyberusLogin () {
         // console.log("username : ",username)
         // console.log("password : ",password)
         // console.log("partner_id : ",data[0]["partner_id"])
-        if (data[0]["code"] === '1'){
+        if (data[0]["code"] == '1'){
           alert("Welcome "+username)
           localStorage.setItem("user", username);
           localStorage.setItem("session", session);
