@@ -283,9 +283,9 @@ function convertDateRangeToTimestamps(dateString) {
     </ResponsiveContainer>
   </div>
 )}
-
+ 
       {/* Pie Chart */}
-      <div style={{ width: '100%', height: 300 }}>
+      {/* <div style={{ width: '100%', height: 300 }}>
         <center><h4>Overall Register</h4></center>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -307,7 +307,30 @@ function convertDateRangeToTimestamps(dateString) {
             <Legend />
           </PieChart>
         </ResponsiveContainer>
-      </div>
+         <center><h4>Overall Cancel</h4></center>
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              fill="#8884d8"
+              label
+            >
+              {pieData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Pie>
+            <Tooltip />
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+
+      </div> */}
+      
     </div>
   );
 }
