@@ -1,5 +1,6 @@
-import React from 'react';
+
 import { useState } from 'react';
+
 import { useRouter } from 'next/router';
 import SHA256 from 'crypto-js/sha256';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,10 +11,11 @@ import '../styles/assets/css/main.css';
 export default function CyberusLogin () {
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -46,7 +48,7 @@ export default function CyberusLogin () {
         // console.log("username : ",username)
         // console.log("password : ",password)
         // console.log("partner_id : ",data[0]["partner_id"])
-        if (data[0]["code"] == '1'){
+        if (data[0]["code"] === '1'){
           alert("Welcome "+username)
           localStorage.setItem("user", username);
           localStorage.setItem("session", session);
@@ -55,7 +57,7 @@ export default function CyberusLogin () {
           
         }else{
           // Redirect if no session
-          navigate('/login');
+          router.push("/login")
         }
       })
       .catch((error) => {

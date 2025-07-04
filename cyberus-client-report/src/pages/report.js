@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import DatePicker from 'react-datepicker';
@@ -5,11 +6,15 @@ import DatePicker from 'react-datepicker';
 import { format, eachDayOfInterval } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 
-
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  PieChart, Pie, Cell, ResponsiveContainer
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+
+
+// import {
+//   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+//   PieChart, Pie, Cell, ResponsiveContainer
+// } from 'recharts';
 
 export default function ClientReport(){
 
@@ -17,8 +22,6 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const router = useRouter();
 const [shortcodeList, setShortcodeList] = useState([]);
 const [dataReport, setDataReport] = useState(null);
-
-const [err,setError]= useState([]);
 
 
 useEffect(() => {
@@ -46,11 +49,11 @@ useEffect(() => {
       return response.json();
     })
     .then((data) =>  {
-      if (data["code"] == '0') {
+      if (data["code"] === '0') {
           router.push('/login')
       }
     })
-    .catch((err) => setError(err.message));
+    .catch((err) => console.log(err.message));
 
 //GET SHORTCODE
   console.log("partner_id : ", partner_id)
@@ -70,7 +73,7 @@ useEffect(() => {
       .then((data) =>  
        // console.log("SHORTCODE : ",JSON.stringify(data)))
         setShortcodeList( data ))
-      .catch((err) => setError(err.message));
+      .catch((err) => console.log(err.message));
 
 
   }, []);
@@ -87,11 +90,11 @@ const mergeChartData = (reportData) => {
 
   return allDates.map(date => {
     const getSumAndShorts = (key) => {
-      if (reportData[key] != null) {
-        const filtered = reportData[key].filter(item => item.Date == date);
+      if (reportData[key] !== null) {
+        const filtered = reportData[key].filter(item => item.Date === date);
         return {
           total: filtered.reduce((sum, item) => sum + item.Total, 0),
-          shorts: filtered.map(item => item.ShortCode).filter(code => code != "0").join(', ')
+          shorts: filtered.map(item => item.ShortCode).filter(code => code !== "0").join(', ')
         };
       } else {
         return {
@@ -147,15 +150,15 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-const pieData = [
-  {name:'CAPTION-1',value:11,count: 11},
-  {name:'CAPTION-2',value:22,count: 22},
-  {name:'CAPTION-3',value:33,count: 33},
-  {name:'CAPTION-4',value:44,count: 44}, 
-  {name:'CAPTION-5',value:55,count: 55},
-]
+// const pieData = [
+//   {name:'CAPTION-1',value:11,count: 11},
+//   {name:'CAPTION-2',value:22,count: 22},
+//   {name:'CAPTION-3',value:33,count: 33},
+//   {name:'CAPTION-4',value:44,count: 44}, 
+//   {name:'CAPTION-5',value:55,count: 55},
+// ]
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA66CC'];
+// const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA66CC'];
 
 const handleSearch = () => {
 
@@ -192,7 +195,7 @@ console.log("PAYLOAD : ",(JSON.stringify(payload)))
         console.log('Report Data:', JSON.stringify(data)); // optional debug log
          setDataReport(data); // <- set it into state
       })
-      .catch((err) => setError(err.message));
+      .catch((err) => console.log(err.message));
       
   } else {
     alert("Please select both start and end dates.");
@@ -220,12 +223,12 @@ function convertDateRangeToTimestamps(dateString) {
 
     // End of the day (23:59:59.999)
     // Option 1: Go to the next day at 00:00:00 and subtract 1 millisecond
-    const nextDayDate = new Date(year, month - 1, day + 1, 0, 0, 0, 0);
-    const endTimestampMs = nextDayDate.getTime() - 1; // Timestamp in milliseconds
+    //const nextDayDate = new Date(year, month - 1, day + 1, 0, 0, 0, 0);
+    //const endTimestampMs = nextDayDate.getTime() - 1; // Timestamp in milliseconds
 
     // If you need it in seconds (Unix timestamp is typically in seconds)
     const startTimestampSeconds = Math.floor(startTimestampMs / 1000);
-    const endTimestampSeconds = Math.floor(endTimestampMs / 1000); // Note: this rounds down
+    //const endTimestampSeconds = Math.floor(endTimestampMs / 1000); // Note: this rounds down
 
     // To get exactly 23:59:59 timestamp in seconds, you can set it directly:
     const endDate = new Date(year, month - 1, day, 23, 59, 59, 999); // Set to 999ms for safety
