@@ -76,7 +76,7 @@ useEffect(() => {
       .catch((err) => console.log(err.message));
 
 
-  }, []);
+  }, [router,apiUrl]);
 
 const [startDate, setStartDate] = useState(new Date(), 'dd/MM/yyyy');
 const [endDate, setEndDate] = useState(new Date(), 'dd/MM/yyyy');
