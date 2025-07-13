@@ -23,99 +23,68 @@ const [cancelPieData, setCancelPieData] = useState([]);
 //const [err,setError]= useState([]);
 
 
-useEffect(() => {
-    const username = localStorage.getItem('user'); // replace with your key
-    const session = localStorage.getItem('session'); // replace with your key
-    const partner_id = localStorage.getItem('partner_id'); // replace with your key
-    const reqData = {
-      username,
-      session,
-    };
+// --- Data Fetching and Initial Setup ---
+    useEffect(() => {
+        const username = localStorage.getItem('user');
+        const session = localStorage.getItem('session');
+        const partner_id = localStorage.getItem('partner_id');
 
-
-//CHECK SESSION LOGIN API
-    fetch(`${apiUrl}/report-session`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reqData),
-    })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch user list');
-      }
-      return response.json();
-    })
-    .then((data) =>  {
-      if (data["code"] === '0') {
-          router.push('/login')
-      }
-    })
-    .catch((err) => console.log(err.message));
-
-//GET SHORTCODE
-  console.log("partner_id : ", partner_id)
-    fetch(`${apiUrl}/report-shortcode-client`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    body: JSON.stringify({client_partner_id: partner_id}),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch user list');
+        if (!username || !session) {
+            router.push('/login');
+            return;
         }
-        return response.json();
-      })
-      .then((data) =>  { console.log("SHORTCODE : ",JSON.stringify(data));
-        setShortcodeList( data ) })
 
-      .catch((err) => console.log(err.message));
+        const reqData = { username, session };
 
-       
-const payload = {
-  "list-shortcode": shortcodeList,     // e.g. from another state
-};
-        //GET OVERALL REGISTER,CANCEL
- fetch(`${apiUrl}/report-overall-pie`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    body: JSON.stringify(payload) ,
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch user list');
-        }
-        return response.json();
-      })
-      .then((data) =>   {
-     console.log("PIE DATA : ",JSON.stringify(data))
-      // Step 1: Parse the JSON string into a JavaScript object.
-const parsedData = JSON.parse(JSON.stringify(data));
-// Step 2: Now you can access the "data-summary" property and assign it to your constant.
-const summaryData = parsedData["data-summary"];
-    const registerData = summaryData.map(item => ({
-      name: item.ShortCode,
-      value: item.RegisterTotal,
-      count: item.RegisterTotal
-    }));
+        // Combined fetch for initial data
+        const fetchData = async () => {
+            try {
+                // Step 1: Check session validity and wait for the response.
+                const sessionRes = await fetch(`${apiUrl}/report-session`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reqData),
+                });
+                const sessionData = await sessionRes.json();
+                if (sessionData.code === '0') {
+                    router.push('/login');
+                    return; // Stop execution if session is invalid
+                }
 
-    const cancelData = summaryData.map(item => ({
-      name: item.ShortCode,
-      value: item.CancelTotal,
-      count: item.CancelTotal
-    }));
-    setRegisterPieData(registerData);
-    setCancelPieData(cancelData);
-           }
-          )
-      .catch((err) => console.log(err.message));
+                // Step 2: Fetch shortcodes and wait for the response.
+                const shortcodeRes = await fetch(`${apiUrl}/report-shortcode-client`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ client_partner_id: partner_id }),
+                });
+                const shortcodes = await shortcodeRes.json();
+                setShortcodeList(shortcodes); // Set state for later use (e.g., in handleSearch)
 
-  }, [apiUrl,router]);
+                // Step 3: Now that we have the shortcodes, build the payload and fetch the pie chart data.
+                const piePayload = { "list-shortcode": shortcodes };
+                const pieRes = await fetch(`${apiUrl}/report-overall-pie`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(piePayload),
+                });
+                const pieData = await pieRes.json();
+                
+                // Step 4: Process the pie data and set the state.
+                const summaryData = pieData["data-summary"] || [];
+                
+                const registerData = summaryData.map(item => ({ name: item.ShortCode, value: item.RegisterTotal }));
+                const cancelData = summaryData.map(item => ({ name: item.ShortCode, value: item.CancelTotal }));
+
+                setRegisterPieData(registerData);
+                setCancelPieData(cancelData);
+
+            } catch (err) {
+                console.error("Failed to fetch initial data:", err.message);
+            }
+        };
+
+        fetchData();
+    }, [apiUrl, router]);
 
 const [startDate, setStartDate] = useState(new Date(), 'dd/MM/yyyy');
 const [endDate, setEndDate] = useState(new Date(), 'dd/MM/yyyy');
