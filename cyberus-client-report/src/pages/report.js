@@ -18,7 +18,8 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 const router = useRouter();
 const [shortcodeList, setShortcodeList] = useState([]);
 const [dataReport, setDataReport] = useState(null);
-
+const [registerPieData, setRegisterPieData] = useState([]);
+const [cancelPieData, setCancelPieData] = useState([]);
 //const [err,setError]= useState([]);
 
 
@@ -26,11 +27,11 @@ useEffect(() => {
     const username = localStorage.getItem('user'); // replace with your key
     const session = localStorage.getItem('session'); // replace with your key
     const partner_id = localStorage.getItem('partner_id'); // replace with your key
-    
     const reqData = {
       username,
       session,
     };
+
 
 //CHECK SESSION LOGIN API
     fetch(`${apiUrl}/report-session`, {
@@ -54,7 +55,7 @@ useEffect(() => {
     .catch((err) => console.log(err.message));
 
 //GET SHORTCODE
-  console.log("partner_id : ", partner_id)
+  //console.log("partner_id : ", partner_id)
     fetch(`${apiUrl}/report-shortcode-client`, {
       method: 'POST',
       headers: {
@@ -68,11 +69,51 @@ useEffect(() => {
         }
         return response.json();
       })
-      .then((data) =>  
-       // console.log("SHORTCODE : ",JSON.stringify(data)))
-        setShortcodeList( data ))
+      .then((data) =>  { //console.log("SHORTCODE : ",JSON.stringify(data));
+        setShortcodeList( data ) })
+
       .catch((err) => console.log(err.message));
 
+       
+const payload = {
+  "list-shortcode": shortcodeList,     // e.g. from another state
+};
+        //GET OVERALL REGISTER,CANCEL
+ fetch(`${apiUrl}/report-overall-pie`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    body: JSON.stringify(payload) ,
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch user list');
+        }
+        return response.json();
+      })
+      .then((data) =>   {
+     // console.log("PIE DATA : ",JSON.stringify(data))
+      // Step 1: Parse the JSON string into a JavaScript object.
+const parsedData = JSON.parse(JSON.stringify(data));
+// Step 2: Now you can access the "data-summary" property and assign it to your constant.
+const summaryData = parsedData["data-summary"];
+    const registerData = summaryData.map(item => ({
+      name: item.ShortCode,
+      value: item.RegisterTotal,
+      count: item.RegisterTotal
+    }));
+
+    const cancelData = summaryData.map(item => ({
+      name: item.ShortCode,
+      value: item.CancelTotal,
+      count: item.CancelTotal
+    }));
+    setRegisterPieData(registerData);
+    setCancelPieData(cancelData);
+           }
+          )
+      .catch((err) => console.log(err.message));
 
   }, [apiUrl,router]);
 
@@ -148,13 +189,6 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-const pieData = [
-  {name:'CAPTION-1',value:11,count: 11},
-  {name:'CAPTION-2',value:22,count: 22},
-  {name:'CAPTION-3',value:33,count: 33},
-  {name:'CAPTION-4',value:44,count: 44}, 
-  {name:'CAPTION-5',value:55,count: 55},
-]
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AA66CC'];
 
@@ -200,7 +234,6 @@ console.log("PAYLOAD : ",(JSON.stringify(payload)))
   }
 };  
 
-
 function convertDateRangeToTimestamps(dateString) {
     // Ensure dateString is in a format parseable by new Date()
     // For "DD/MM/YYYY", it's safer to parse manually or rearrange to "MM/DD/YYYY"
@@ -242,96 +275,118 @@ function convertDateRangeToTimestamps(dateString) {
     };
 }
 
+return (
 
+<div>
+<br/>
+          <center>
+   {/* --- Menu --- */}
+            <header className="bg-white shadow-md sticky top-0 z-40">
+                <nav>
+                    <a href="/client-report/report" title="Summary data">
+                        SUMMARY REPORT
+                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="/client-report/ais-history" title="Your AIS request history">
+                        AIS HISTORY
+                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="/client-report/dtac-history" title="Your DTAC request history">
+                        DTAC HISTORY
+                    </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     <a href="/client-report/tmvh-history" title="Your TRUEMOVE request history">
+                       TRUEMOVE HISTORY
+                    </a>
+                </nav>
+            </header>
+            </center>
 
-
-  return (
-
-    <div style={{ padding: '40px' ,backgroundColor: '#FFFFFF' , zIndex:'revert'}}>
-      {/* Date Picker UI */}
-      <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
-        <div>
-          <label><strong>Start Date:</strong></label><br />
-          <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} dateFormat="dd/MM/yyyy" />
-        </div>
-        <div>
-          <label><strong>End Date:</strong></label><br />
-          <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} dateFormat="dd/MM/yyyy" />
-        </div>
-        <div>
-          <button onClick={handleSearch} style={{ padding: '8px 16px', marginTop: '20px' }}>
-            Search
-          </button>
-        </div>
-      </div>
-
-     {dataReport && (
-  <div style={{ width: '90%', height: 400, marginBottom: '40px' }}>
-    <ResponsiveContainer width="100%" height={400}>
-      <LineChart data={lineChartReport} margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" />
-        <YAxis />
-        <Tooltip content={<CustomTooltip />} />
-        <Legend />
-        <Line type="monotone" dataKey="aisCancelTotal" stroke="#025c09" name="AIS Cancel" />
-        <Line type="monotone" dataKey="aisRegisterTotal" stroke="#0ead1b" name="AIS Register" />
-        <Line type="monotone" dataKey="dtacCancelTotal" stroke="#091875" name="DTAC Cancel" />
-        <Line type="monotone" dataKey="dtacRegisterTotal" stroke="#0541f5" name="DTAC Register" />
-        <Line type="monotone" dataKey="tmvhCancelTotal" stroke="#a36070" name="TMVH Cancel" />
-        <Line type="monotone" dataKey="tmvhRegisterTotal" stroke="#e6093d" name="TMVH Register" />
-      </LineChart>
-    </ResponsiveContainer>
-  </div>
-)}
- 
+    <div style={{ display:'flex', width: '100%', height: 400, marginTop:20 }}>
       {/* Pie Chart */}
-      <div style={{ width: '100%', height: 300 }}>
-        <center><h4>Overall Register</h4></center>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              fill="#8884d8"
-              label
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-         <center><h4>Overall Cancel</h4></center>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              fill="#8884d8"
-              label
-            >
-              {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
 
+            <ResponsiveContainer width="100%" height="100%">
+                <PieChart>  
+                  <Pie
+                    data={registerPieData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                  >
+                    {registerPieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+               <center><h4 className="text-lg font-semibold text-gray-700 mt-2">All Register</h4></center> 
+              </ResponsiveContainer>
+             
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={cancelPieData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                  >
+                    {cancelPieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+                 <center><h4 className="text-lg font-semibold text-gray-700 mt-2">All Cancel</h4></center> 
+              </ResponsiveContainer>
+</div>
+
+
+
+      <div style={{marginTop:'10px', padding: '60px' ,backgroundColor: '#FFFFFF' , zIndex:'revert'}}>
+       <center>REGISTER & CANCEL</center> 
+       <br/>
+              {/* Date Picker UI */}
+                  <div style={{ justifyContent: 'center', display: 'flex', gap: '20px' }}>
+                    <div>
+                      <label><strong>Start Date:</strong></label><br />
+                      <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} dateFormat="dd/MM/yyyy" />
+                    </div>
+                    <div>
+                      <label><strong>End Date:</strong></label><br />
+                      <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} dateFormat="dd/MM/yyyy" />
+                    </div>
+                    <div>
+                      <button onClick={handleSearch} style={{ padding: '8px 16px', marginTop: '20px' }}>
+                        Search
+                      </button>
+                    </div>
+                  </div>
+
+                   {/* Line Chart */}
+                {dataReport && (
+              <div style={{ width: '90%', height: 400, marginBottom: '40px' }}>
+                <ResponsiveContainer width="100%" height={400}>
+                  <LineChart data={lineChartReport} margin={{ top: 60, right: 30, left: 20, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                    <Line type="monotone" dataKey="aisCancelTotal" stroke="#025c09" name="AIS Cancel" />
+                    <Line type="monotone" dataKey="aisRegisterTotal" stroke="#0ead1b" name="AIS Register" />
+                    <Line type="monotone" dataKey="dtacCancelTotal" stroke="#091875" name="DTAC Cancel" />
+                    <Line type="monotone" dataKey="dtacRegisterTotal" stroke="#0541f5" name="DTAC Register" />
+                    <Line type="monotone" dataKey="tmvhCancelTotal" stroke="#a36070" name="TMVH Cancel" />
+                    <Line type="monotone" dataKey="tmvhRegisterTotal" stroke="#e6093d" name="TMVH Register" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>)}
       </div>
-      
-    </div>
+      </div>
   );
 }

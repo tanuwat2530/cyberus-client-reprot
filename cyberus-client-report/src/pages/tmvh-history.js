@@ -192,7 +192,7 @@ export default function ClientHistoryTmvh() {
                         PREV.
                     </button>
                     <span className="text-sm text-gray-600">
-                        Page {currentPage} of {totalPages || 1}
+                         {currentPage} of {totalPages || 1}
                     </span>
                     <button
                         onClick={handleNextPage}
@@ -203,6 +203,10 @@ export default function ClientHistoryTmvh() {
                     </button>
                     </center>
                 </div>
+                  <center>
+                        <br/>
+                        <nav><a href="/client-report/report" title="REPORT">SUMMARY REPORT</a></nav>
+                    </center>
             </div>
         </div>
     );
