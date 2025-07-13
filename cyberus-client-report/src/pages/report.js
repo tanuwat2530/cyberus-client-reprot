@@ -55,7 +55,7 @@ useEffect(() => {
     .catch((err) => console.log(err.message));
 
 //GET SHORTCODE
-  //console.log("partner_id : ", partner_id)
+  console.log("partner_id : ", partner_id)
     fetch(`${apiUrl}/report-shortcode-client`, {
       method: 'POST',
       headers: {
@@ -69,7 +69,7 @@ useEffect(() => {
         }
         return response.json();
       })
-      .then((data) =>  { //console.log("SHORTCODE : ",JSON.stringify(data));
+      .then((data) =>  { console.log("SHORTCODE : ",JSON.stringify(data));
         setShortcodeList( data ) })
 
       .catch((err) => console.log(err.message));
@@ -93,7 +93,7 @@ const payload = {
         return response.json();
       })
       .then((data) =>   {
-     // console.log("PIE DATA : ",JSON.stringify(data))
+     console.log("PIE DATA : ",JSON.stringify(data))
       // Step 1: Parse the JSON string into a JavaScript object.
 const parsedData = JSON.parse(JSON.stringify(data));
 // Step 2: Now you can access the "data-summary" property and assign it to your constant.
@@ -312,6 +312,7 @@ return (
                     cy="50%"
                     outerRadius={80}
                     fill="#8884d8"
+                    label
                   >
                     {registerPieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -333,6 +334,7 @@ return (
                     cy="50%"
                     outerRadius={80}
                     fill="#8884d8"
+                    label
                   >
                     {cancelPieData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
